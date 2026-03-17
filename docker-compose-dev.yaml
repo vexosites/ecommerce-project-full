@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  api:
+    build: ./back-end
+    working_dir: /app
+    command: sh -c "npx prisma generate && npx prisma db push && npm run dev"
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    volumes:
+      - ./back-end:/app
+      - /app/node_modules
+    environment:
+      DATABASE_URL: postgresql://postgres:reacender@db:5432/ecomerce_project
+      REDIS_URL: redis://redis:6379
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    build: ./front-end\ m,                                                    
+    working_dir: /app
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./front-end:/app
+      - /app/node_modules
+    environment:
+      VITE_URL: http://localhost:3000
+      CHOKIDAR_USEPOLLING: "true"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: ecomerce_project
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: reacender
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis/redis-stack-server:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    restart: unless-stopped
+
+volumes:
+  postgresdata:
+  redisdata:
