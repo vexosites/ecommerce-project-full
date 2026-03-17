@@ -1,0 +1,227 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELED
+  SHIPPED
+  DELIVERED
+}
+
+enum PaymentMethod {
+  PIX
+  CREDIT_CARD
+  DEBIT_CARD
+  BOLETO
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+// =======================
+// MODELS
+// =======================
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  cpf       String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  addresses    Address[]
+  orders       Order[]
+  cart         Cart?
+  refreshToken RefreshToken?
+}
+
+// -----------------------
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+
+  products Product[]
+}
+
+// -----------------------
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  images     ProductImage[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+}
+
+// -----------------------
+
+model ProductImage {
+  id  Int    @id @default(autoincrement())
+  url String
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------
+
+model Cart {
+  id     Int @id @default(autoincrement())
+  userId Int @unique
+
+  user  User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items CartItem[]
+}
+
+// -----------------------
+
+model CartItem {
+  id       Int @id @default(autoincrement())
+  quantity Int
+
+  cartId    Int
+  productId Int
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+// -----------------------
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  status    OrderStatus @default(PENDING)
+  total     Decimal     @db.Decimal(10, 2)
+  createdAt DateTime    @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  items   OrderItem[]
+  payment Payment?
+  address OrderAddress?
+}
+
+// -----------------------
+
+model OrderItem {
+  id       Int     @id @default(autoincrement())
+  quantity Int
+  price    Decimal @db.Decimal(10, 2)
+
+  orderId   Int
+  productId Int
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+}
+
+// -----------------------
+
+model Payment {
+  id        Int           @id @default(autoincrement())
+  method    PaymentMethod
+  status    PaymentStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+
+  orderId Int   @unique
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------
+// ENDEREÇO DO USUÁRIO
+// -----------------------
+
+model Address {
+  id      Int    @id @default(autoincrement())
+  street  String
+  number  String
+  city    String
+  state   String
+  zipCode String
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// -----------------------
+// SNAPSHOT DO ENDEREÇO DO PEDIDO
+// -----------------------
+
+model OrderAddress {
+  id      Int    @id @default(autoincrement())
+  street  String
+  number  String
+  city    String
+  state   String
+  zipCode String
+
+  orderId Int   @unique
+  order   Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String
+  userId    Int      @unique
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Connections {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+}

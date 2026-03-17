@@ -1,0 +1,254 @@
+E-Commerce API
+
+A modern and scalable RESTful API for an e-commerce platform. This API provides essential features such as customer registration, authentication, product management, category management, and product search.
+
+Features
+
+Customer registration
+
+Customer authentication (login)
+
+Product creation
+
+Product search
+
+Category creation
+
+Get category by ID
+
+RESTful architecture
+
+JSON-based responses
+
+Tech Stack
+
+Node.js
+
+Express.js
+
+MySQL (or any SQL database)
+
+JWT (for authentication)
+
+Base URL
+http://localhost:3000/api
+
+Authentication
+
+Some routes (like product creation and category creation) may require authentication using JWT.
+
+Include the token in the Authorization header:
+
+Authorization: Bearer YOUR_TOKEN
+
+API Routes
+1. Customer Registration
+
+Register a new customer in the system.
+
+Endpoint:
+
+POST /customers/register
+
+
+Request Body:
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "123456"
+}
+
+
+Response:
+
+{
+  "success": true,
+  "message": "Customer registered successfully"
+}
+
+2. Customer Login
+
+Authenticate a customer and receive a JWT token.
+
+Endpoint:
+
+POST /customers/login
+
+
+Request Body:
+
+{
+  "email": "john@example.com",
+  "password": "123456"
+}
+
+
+Response:
+
+{
+  "success": true,
+  "token": "jwt_token_here"
+}
+
+3. Create Product
+
+Create a new product in the store.
+
+Endpoint:
+
+POST /products
+
+
+Headers:
+
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+
+Request Body:
+
+{
+  "name": "Running Shoes",
+  "description": "Comfortable running shoes",
+  "price": 199.99,
+  "categoryId": 1,
+  "stock": 10
+}
+
+
+Response:
+
+{
+  "success": true,
+  "message": "Product created successfully"
+}
+
+4. Search Products
+
+Search products by name, keyword, or filters.
+
+Endpoint:
+
+GET /products/search?q=keyword
+
+
+Query Parameters:
+
+q (string) – Search keyword
+
+Example:
+
+GET /products/search?q=shoes
+
+
+Response:
+
+{
+  "success": true,
+  "products": [
+    {
+      "id": 1,
+      "name": "Running Shoes",
+      "price": 199.99
+    }
+  ]
+}
+
+5. Get Category by ID
+
+Retrieve a specific category using its ID.
+
+Endpoint:
+
+GET /categories/:id
+
+
+Example:
+
+GET /categories/1
+
+
+Response:
+
+{
+  "success": true,
+  "category": {
+    "id": 1,
+    "name": "Sneakers"
+  }
+}
+
+6. Create Category
+
+Create a new product category.
+
+Endpoint:
+
+POST /categories
+
+
+Headers:
+
+Authorization: Bearer YOUR_TOKEN
+Content-Type: application/json
+
+
+Request Body:
+
+{
+  "name": "Sneakers"
+}
+
+
+Response:
+
+{
+  "success": true,
+  "message": "Category created successfully"
+}
+
+Project Structure (Example)
+src/
+├── controllers/
+├── services/
+├── repositories/
+├── routes/
+├── middlewares/
+└── app.js
+
+Installation
+
+Clone the repository:
+
+git clone https://github.com/your-username/ecommerce-api.git
+
+
+Install dependencies:
+
+npm install
+
+
+Configure environment variables:
+Create a .env file:
+
+PORT=3000
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=ecommerce
+JWT_SECRET=your_secret_key
+
+
+Run the project:
+
+npm run dev
+
+Error Handling
+
+All errors follow a standard response format:
+
+{
+  "success": false,
+  "error": "Error message"
+}
