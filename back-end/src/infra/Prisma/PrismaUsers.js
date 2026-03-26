@@ -1,4 +1,4 @@
-import PrismaClient from "../../../prisma/prisma-client.js"
+
 
 class PrismaUsers{
     constructor(PrismaClient){
@@ -26,5 +26,7 @@ class PrismaUsers{
         return result
     }
 }
+
+import PrismaClient from "./Prisma-client.js";
 
 export default new PrismaUsers(PrismaClient);

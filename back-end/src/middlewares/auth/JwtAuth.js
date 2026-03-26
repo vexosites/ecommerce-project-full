@@ -11,16 +11,21 @@ class AuthMiddlewares {
 
     console.log('tokens', 'access-token', access_token, 'refresh-token', refresh_token)
 
-    if(!access_token || !refresh_token) return res.status(401).json({error: 'invalid tokens'})
+    if(!access_token || !refresh_token) return res.status(401).json({error: 'tokens are required'})
 
-    const result = await this.tokenService.verify(access_token, refresh_token);
+    console.log('1')
+    let result;
+    try {
+       result = await this.tokenService.verify(access_token, refresh_token);
+      console.log('result', result)
+    } catch (error) {
 
-    console.log('result', result)
+      console.log('error', error)
 
-    if (!result.valid) return res.status(401).json({ error: "invalid token" });
+      if (!error.valid) return res.status(401).json({ error: "invalid token" });
 
-    if (!result.idAdmin) return res.status(403).json({ error: "user don't have access" });
-
+    if (!error.isAdmin) return res.status(403).json({ error: "user is not authorized" });
+    }
     if (result.access_token) {
       res.cookie("access-token", result.access_token, {
         httpOnly: true,
@@ -37,6 +42,7 @@ class AuthMiddlewares {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
     }
+    console.log('loginnnn')
     return next();
 }
 

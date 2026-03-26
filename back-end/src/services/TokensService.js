@@ -23,13 +23,15 @@ class TokensService {
       console.log("result", result);
 
       console.log("access-token", access_token, "refresh-token", refresh_token);
-      return {
+      return { 
           access_token,
           refresh_token,
       }
     } catch (error) {
       console.log("error", error);
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if ( error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2002') {
+      console.log('duplicadooooo')
         const del = await this.TokensRepository.deleteByUserId(payload.id);
         console.log("delete", del);
         const result = await this.TokensRepository.create({
@@ -39,7 +41,7 @@ class TokensService {
         return {
             access_token,
             refresh_token
-          }
+          }/*  */
         };
       throw error;
     }
@@ -49,18 +51,30 @@ class TokensService {
     try {
       const token = await this.TokensProvider.verify(access_token);
 
-      if (!token.isAdmin) throw { valid: false };
+      console.log('token', token)
 
-      if (this.TokensProvider.isOlder9Min(token.decoded.payload.iat)) {
+      if(!token.valid) throw { valid: false}
+
+      console.log('58')
+
+      if (!token.isAdmin) throw { isAdmin: false, valid: true};
+
+      console.log('62')
+
+      if(token.expired) throw {valid: true, isAdmin: true, expired: true}
+
+      if (this.TokensProvider.isOlder9Min(token.payload.iat)) {
         return {
           access_token: await this.TokensProvider.generate(token, "30min"),
           valid: true,
+          isAdmin: true
         };
       }
 
-      return { access_token, valid: true };
+      return { access_token, valid: true, isAdmin: true };
     } catch (error) {
-      if (error.valid && error.expired) {
+      if (error.valid && error.expired && error.isAdmin) {
+        console.log('valid', 'expired')
         try {
           const refreshPayload = await this.TokensProvider.verify(refresh_token)
             .decoded.payload;
@@ -81,6 +95,7 @@ class TokensService {
           throw { error: new Error("invalid Refresh token"), valid: false };
         }
       }
+      console.log('error', error)
       throw error;
     }
   }

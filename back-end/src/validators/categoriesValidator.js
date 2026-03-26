@@ -2,11 +2,11 @@ import AppError from "../errors/UserError.js";
 
 class ProductsValidator {
   post(req) {
-    const { name, slug } = req.body;
+    const { name, slug, parentId } = req.body;
     if (!name || !slug) {
       throw new AppError("invalid data", 400);
     }
-    return { name, slug };
+    return { name, slug, parentId };
   }
   get(req) {
     return parseInt(req.params.id);

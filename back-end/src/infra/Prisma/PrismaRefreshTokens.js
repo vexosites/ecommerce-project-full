@@ -23,7 +23,6 @@ class PrismaRefreshTokens {
   }
 }
 
-import PrismaClient from "../../../prisma/prisma-client.js";
-import { Prisma } from "../../generated/prisma/client.js";
+import PrismaClient from "./Prisma-client.js";
 
-export default new PrismaRefreshTokens(PrismaClient, Prisma);
+export default new PrismaRefreshTokens(PrismaClient);

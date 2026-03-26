@@ -1,6 +1,6 @@
 <template>
-<section>
-
+<section class="bg-[#cacaca] flex min-h-[21rem] px-9 gap-20">
+    <Product v-for="product in category" :product="product"></Product>
 </section>
 </template>
 
@@ -8,16 +8,7 @@
 import Product from "../components/product.vue"
 import CategoryStore from "../stores/CategoryStore.js"
 export default{
-    data(){
-        return{
-
-        }
-    },
-
-    async mounted(){
-        await CategoryStore.category()
-    },
-
+    props: ['category'],
     components: {
     Product
 }

@@ -8,7 +8,8 @@ class PrismaCategories {
         data: {
           name: data.name,
           slug: data.slug,
-        },
+          parentId: data.parentId
+        }
       });
       return category;
     } catch (error) {
@@ -16,16 +17,16 @@ class PrismaCategories {
     }
   }
   async findAll(){
-    const result = await this.prismaClient.Category.findMany({
-      where: {
-
-      }
-    });
+        const result = await this.prismaClient.category.findMany({
+        include: {
+          children: true
+        }
+      });
     console.log('categories',  result)
     return result
   }
 }
 
-import PrismaClient from "../../../prisma/prisma-client.js";
+import PrismaClient from "./Prisma-client.js";
 
 export default new PrismaCategories(PrismaClient);

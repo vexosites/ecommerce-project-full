@@ -15,6 +15,7 @@ export class Products_repository {
 
   async findByEmail(email) {
     const result = await this.db_orm.findByEmail(email);
+    console.log('db-data', result)
     return result;
   }
 }

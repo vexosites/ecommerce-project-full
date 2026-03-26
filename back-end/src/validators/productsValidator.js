@@ -2,22 +2,15 @@ import AppError from "../errors/UserError.js";
 
 class ProductsValidator {
   post(req) {
-    console.log(req.body.product);
+    console.log('validator', req.body);
 
-    const json_body = JSON.parse(req.body.product);
+    const {name, price, stock, categoryId, slug, description} = req.body;
 
-    console.log('json-body', json_body)
-
-    const { name, description, price, active, stock, categoryId, slug } =
-      json_body;
-
-    const imgs = req.files;
-
-    console.log(imgs);
-    if (!name || !description || !price || !active || !stock || !categoryId) {
-      throw new AppError("invalid body", 400);
+    if(!name || price === null|| stock === null || !categoryId || !slug) {
+      throw new AppError('invalid data', 400)
     }
-    return { name, description, price: Number(price), active, stock: Number(stock), categoryId: Number(categoryId), slug, imgs };
+
+    return { name, description, price, stock, categoryId, slug};
   }
   get(req){
     const { name } = req.params;

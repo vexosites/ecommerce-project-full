@@ -1,14 +1,13 @@
 import AppError from "../errors/UserError.js";
-import imagesRepository from "../repositories/images-repository.js";
 
 class ProductService {
   constructor(ProductRepository, imgsService) {
     this.ProductRepository = ProductRepository;
-    this.imgsService = imgsService;
   }
   async post(validator) {
     try {
-      const { name, categoryId, description, price, stock, active, slug } =
+      console.log("validator-service", validator)
+      const { name, categoryId, description, price, stock, slug } =
         validator;
 
       const product = await this.ProductRepository.create({
@@ -17,26 +16,13 @@ class ProductService {
         price,
         description,
         stock,
-        active,
-        slug,
+        slug
       });
-      const imgs = await this.imgsService.postArray(validator.imgs);
-
-      console.log('imgs', imgs)
-
-      const imgs_url = imgs.map(i => i.url);
-
-      const imgs_model = imgs_url.map(i => ({
-        url: i,
-        productId: product.id
-      }))
-
-      const img = await imagesRepository.create(imgs_model);
 
       return {
-        product,
-        img,
+        product
       };
+
     } catch (error) {
       if (error.code === "P2002") {
         throw new AppError("product already exists", 401);

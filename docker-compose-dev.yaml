@@ -14,6 +14,7 @@ services:
     environment:
       DATABASE_URL: postgresql://postgres:reacender@db:5432/ecomerce_project
       REDIS_URL: redis://redis:6379
+      JWT_SECRET: 'teste'
       CHOKIDAR_USEPOLLING: "true"
     depends_on:
       - db
@@ -21,7 +22,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./front-end\ m,                                                    
+    build: ./front-end                                                
     working_dir: /app
     command: npm run dev -- --host
     ports:
@@ -37,7 +38,7 @@ services:
     restart: unless-stopped
 
   db:
-    image: postgres:17
+    image: docker.io/library/postgres:17
     environment:
       POSTGRES_DB: ecomerce_project
       POSTGRES_USER: postgres
@@ -49,7 +50,7 @@ services:
     restart: unless-stopped
 
   redis:
-    image: redis/redis-stack-server:latest
+    image: docker.io/redis/redis-stack-server:latest
     ports:
       - "6379:6379"
     volumes:

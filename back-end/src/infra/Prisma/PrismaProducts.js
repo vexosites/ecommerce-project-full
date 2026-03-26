@@ -2,7 +2,7 @@ class PrismaProducts{
     constructor(PrismaClient){
         this.PrismaClient = PrismaClient;
     }
-async postProductBase(product){
+async create(product){
 return await this.PrismaClient.product.create({
     data: {
         name: product.name,
@@ -35,6 +35,6 @@ async findByName(name){
 }
 }
 
-import PrismaClient from "../../../prisma/prisma-client.js";
+import PrismaClient from "./Prisma-client.js";
 
 export default new PrismaProducts(PrismaClient);

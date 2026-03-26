@@ -24,7 +24,6 @@ class PrismaImages {
   }
 }
 
-import PrismaClient from "../../../prisma/prisma-client.js";
-import products from "../../controllers/products.js";
+import PrismaClient from "./Prisma-client.js";
 
 export default new PrismaImages(PrismaClient);

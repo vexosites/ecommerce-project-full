@@ -1,0 +1,28 @@
+/* Transparência geral da janela */
+body {
+    background-color: rgba(30, 30, 30, 0.2) !important; /* 80% transparente */
+}
+
+/* Área principal do editor */
+.monaco-workbench {
+    background-color: rgba(30, 30, 30, 0.2) !important;
+}
+
+/* Editor de código */
+.monaco-editor,
+.monaco-editor-background,
+.editor-container {
+    background-color: rgba(30, 30, 30, 0.2) !important;
+}
+
+/* Sidebar */
+.sidebar,
+.activitybar,
+.part.sidebar {
+    background-color: rgba(30, 30, 30, 0.2) !important;
+}
+
+/* Painel inferior (terminal, problemas, etc.) */
+.panel {
+    background-color: rgba(30, 30, 30, 0.2) !important;
+}

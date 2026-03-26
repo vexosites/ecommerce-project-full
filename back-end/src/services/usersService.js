@@ -58,7 +58,8 @@ async get(validator){
         const payload = {
             id: user.id, 
             name: user.name,
-            email: user.email
+            email: user.email,
+            role: user.role
         }
 
         const tokens = await this.TokenService.generate(payload);

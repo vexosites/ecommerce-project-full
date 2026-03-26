@@ -10,6 +10,7 @@ class UserRepository{
 
     async findByEmail(email){
         const result = await this.orm.findByEmail(email);
+        
         return result;
     }
 }

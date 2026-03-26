@@ -1,0 +1,6 @@
+{
+    "xglass.alpha": 100,
+    "vscode_custom_css.imports": [
+    "./s.css"
+]
+}

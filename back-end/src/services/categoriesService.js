@@ -10,6 +10,7 @@ class categoriesService {
       const data = await this.categoriesRepository.create({
         name: validator.name,
         slug: validator.slug,
+        parentId: validator.parentId
       });
       return data;
     } catch (error) {
@@ -18,17 +19,19 @@ class categoriesService {
   }
   async get(categoryId) {
     try {
-      const products_raw = await this.categoriesRepository.findByCategoryId(
-        categoryId
-      );
+      const products_raw = await this.categoriesRepository.findByCategoryId(categoryId);
+
+      console.log("products_raw", products_raw)
+
+      if(products_raw?.length < 0){
+        return products_raw;
+      }
 
       console.log("categories-service-products", products_raw);
 
       const imgs_raw = await imagesRepository.findManyByProductIds(
         products_raw.map(p => p.id)
       );
-
-      
 
       const product_sorted = this.quickSort(products_raw, "id");
 
@@ -54,7 +57,7 @@ class categoriesService {
         };
       });
 
-      console.log("products-service", products);
+      console.log("products-service3ee", products);
       if (!products || products.lenght < 1) {
         throw new AppError("invalid category", 404);
       }

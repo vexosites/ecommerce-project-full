@@ -9,15 +9,18 @@ class TokensProvider {
   async verify(token){
     try {
        const decoded = await this.jwtProvider.verify(token);
-    if(decoded.payload.rule !== 'admin'){
+       console.log("decoded", decoded)
+    if(decoded.payload.role != 'ADMIN'){
       return {
         ...decoded,
-        isAdmin: false
+        isAdmin: false,
+        valid: true
       }
     }
     return {
       ...decoded,
-      isAdmin: true
+      isAdmin: true,
+      valid: true
     };
     } catch (error) {
       if(!error.valid){

@@ -1,12 +1,15 @@
 async function Controller(req, res, validator, service, cookies) {
+  console.log('controll-model', validator)
   try {
     let result;
-    if(validator){
-      const data = await validator(req);
-      result = await service(data);
-    }
-    result = await service();
 
+if (validator) {
+  const data = await validator(req);
+
+  result = await service(data);
+} else {
+  result = await service();
+}
     if (cookies) {
       for (const cookie of cookies) {
         const valueSplited = cookie.value.split('.'); // pega a propriedade dinâmica

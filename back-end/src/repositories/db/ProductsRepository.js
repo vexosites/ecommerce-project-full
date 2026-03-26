@@ -4,7 +4,7 @@ class ProductsRepository{
     }
 
     async create(product){
-        const result = await this.orm.postProductBase(product);
+        const result = await this.orm.create(product);
         return result;
     }
 

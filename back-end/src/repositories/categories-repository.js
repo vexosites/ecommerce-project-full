@@ -16,20 +16,22 @@ class CategoriesRepository {
   async findByCategoryId(categoryId) {
     const cache = await this.cache_orm.findByCategoryId(categoryId);
     console.log('cache', cache)
-    if (cache && cache.length > 0) {
+    if (cache && cache?.length > 0) {
       return cache;
     }
     const products = await this.db_orm.findByCategoryId(categoryId);
     console.log('products', products)
     if(products.length < 1){
-      return null;
+      return products;
     }
     await this.cache_orm.set(products);
     return products;
   }
 
   async findManyByProductIds(ids){
-    return await imagesRepository.findManyByProductIds(ids);
+    const result = await imagesRepository.findManyByProductIds(ids);
+    console.log("f-repository-result", result);
+    return result;
   }
  
   async findAll(){
