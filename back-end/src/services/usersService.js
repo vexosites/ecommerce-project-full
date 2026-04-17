@@ -1,9 +1,11 @@
 import AppError from "../errors/UserError.js";
 
-class UserService{
-constructor(userRepository, tokenService){
+export default class UserService{
+constructor(userRepository, tokenService, cartRepository, transactionService){
 this.UserRepository = userRepository;
 this.TokenService = tokenService;
+this.CartRepository = cartRepository;
+this.transactionService = transactionService;
 }
 async post(validator){
 try {
@@ -39,7 +41,7 @@ try {
     return result
 } catch (error) {
     if(error.code == 'P2002') {
-        throw new AppError("user already exists", 403)
+        throw new AppError("user already exists", 409)
     }
     throw error;
 }
@@ -82,11 +84,3 @@ async get(validator){
     }
 }
 }
-
-import UsersRepository from "../repositories/users-repository.js";
-import TokenService from "./TokensService.js";
-
-export default new UserService(
-UsersRepository,
-TokenService
-);

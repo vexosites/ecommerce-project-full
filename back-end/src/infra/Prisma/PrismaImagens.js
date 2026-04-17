@@ -11,6 +11,15 @@ class PrismaImages {
       return imgs
     }
   }
+    async findByProductId(productId){
+    const data = await this.PrismaClient.ProductImage.findMany({
+      where: {
+        productId: productId
+      }
+    });
+    return data
+  }
+
   async findManyByProductIds(ids){
     const imgs = await this.PrismaClient.ProductImage.findMany({
       where: {

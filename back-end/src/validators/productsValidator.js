@@ -16,6 +16,9 @@ class ProductsValidator {
     const { name } = req.params;
     return name;
   }
+  getById(req){
+    return {id: parseInt(req.params.id)}
+  }
 }
 
 export default new ProductsValidator();

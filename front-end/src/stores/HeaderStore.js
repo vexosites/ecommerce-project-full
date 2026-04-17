@@ -3,32 +3,47 @@ import { HeaderService } from "../services/headerService.js";
 class HeaderStore extends HeaderService {
   constructor() {
     super();
+
     this.state = {
       categories: [],
       error: null,
-      loading: true
+      loading: false
     };
   }
 
-  async Categories() {
+  async getCategoriesStore() {
+    this.state.loading = true;
+    this.state.error = null;
+
     try {
       const result = await this.getCategories();
-      console.log('result', result)
-      this.state.categories = [...result.data.result];
-      this.state.loading = false
 
-      localStorage.setItem("categories", JSON.stringify(this.categories));
+      this.state.categories = result?.data?.result || [];
+      this.state.loading = false;
+
+      localStorage.setItem(
+        "categories",
+        JSON.stringify(this.state.categories)
+      );
 
       return this.state;
     } catch (error) {
-      if(error.status === 404){
-        this.state.categories = JSON.parse(localStorage.getItem('categories'));
+      console.error("Error on the categories req:", error);
+
+      // fallback do cache
+      const cached = localStorage.getItem("categories");
+
+      if (cached) {
+        this.state.categories = JSON.parse(cached);
       }
-      console.log(localStorage.getItem('categories'))
-      this.state.loading = false
-      return this.state
+
+      this.state.error = error;
+      this.state.loading = false;
+
+      return this.state;
     }
   }
 }
 
-export default new HeaderStore();
+// 👇 Singleton (global)
+export const headerStore = new HeaderStore();

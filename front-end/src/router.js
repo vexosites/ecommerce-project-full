@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { KeepAlive } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
 // Importar componentes de página (você precisará criar esses componentes)
@@ -15,6 +16,14 @@ const routes = [
     meta: {
       KeepAlive: true
     }
+  }, 
+  {
+    path: '/category/:slug',
+    name: 'Category',
+    component: () => import('./routes/category.vue'),
+    meta: {
+      KeepAlive: true
+    }
   },
   {
     path: '/products',
@@ -22,9 +31,9 @@ const routes = [
     // component: Products
   },
   {
-    path: '/product/:id',
+    path: '/product/:slug',
     name: 'ProductDetail',
-    // component: ProductDetail
+    component: () => import('./routes/product.vue')
   },
   {
     path: '/cart',

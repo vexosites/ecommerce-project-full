@@ -15,6 +15,10 @@ export class Products_repository {
       throw error;
     }
   }
+  async findById(id){
+    const data = await this.db_orm.findById(id);
+    return data
+  }
   async findByName(name) {
     try {
       const product = await this.db_orm.findByName(name);

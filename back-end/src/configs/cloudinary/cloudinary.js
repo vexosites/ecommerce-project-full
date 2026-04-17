@@ -1,7 +1,12 @@
-import { v2 as cloudinary } from 'cloudinary';
-    // Configuration
-const Cloudinary = cloudinary.config({ 
-       long_url_signature: process.env.cloudinary_url
-    });
+import { v2 as cloudinary } from 'cloudinary'
+import 'dotenv/config';
+
+console.log('env', process.env)
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export default cloudinary;

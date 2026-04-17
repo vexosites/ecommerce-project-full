@@ -1,5 +1,3 @@
-import { Prisma } from "../generated/prisma/client.js";
-
 class TokensService {
   constructor(TokensProvide, TokensRepository) {
     this.TokensProvider = TokensProvide;
@@ -103,4 +101,5 @@ class TokensService {
 
 import TokensProvider from "../utils/Tokens/TokensProvider.js";
 import refreshTokensRepository from "../repositories/refresh-tokens-repository.js";
+
 export default new TokensService(TokensProvider, refreshTokensRepository);

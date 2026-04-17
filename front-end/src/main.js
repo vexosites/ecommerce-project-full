@@ -9,5 +9,6 @@ const app = createApp(App)
 
 app.use(createPinia())   // 👈 aqui
 app.use(router)
+app.use(createPinia())
 
 app.mount('#app')

@@ -33,6 +33,14 @@ async findByName(name){
         }
     })
 }
+async findById(id){
+    console.log("iddd", id)
+    return await this.PrismaClient.product.findFirst({
+        where: {
+            id: id
+        }
+    })
+}
 }
 
 import PrismaClient from "./Prisma-client.js";

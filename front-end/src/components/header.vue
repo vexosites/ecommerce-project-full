@@ -1,4 +1,5 @@
 <template>
+  <Cart v-if="cartStore.cartOpen"/>
   <header class="w-full min-h-[80px] flex justify-center items-center gap-20 bg-[#ffffffaa] px-20">
 
     <!-- Logo -->
@@ -6,8 +7,8 @@
   <img 
     src="../assets/lg.png" 
     alt="Logo" 
-    class="object-contain max-w-full max-h-full" 
-  />
+    class="object-contain max-w-full max-h-full cursor-pointer" 
+   @click="$router.push({path: '/'})"/>
 </div>
     <!-- Categories -->
     <ul class="flex gap-[50px] list-none items-center justify-center">
@@ -19,7 +20,11 @@
   @mouseleave="scheduleClose(category.id)"
 >
   <span 
-    @click="TakeTo(category.slug)"
+    @click="$router.push({path: '/category/' + category.slug,
+      query: {
+        id: category.id
+      }
+    })"
     class="text-[#1d1d1d] text-[0.90rem] cursor-pointer hover:text-gray-400 transition"
   >
     {{ category.name }}
@@ -33,7 +38,11 @@
     <span
       v-for="child in category.children" 
       :key="child.id" 
-      @click="TakeTo(child.slug)"
+      @click="$router.push({path: '/category/' + child.slug,
+      query: {
+        id: child.id
+      }
+    })"
     >
       {{ child.name }}
       <div>
@@ -50,7 +59,7 @@
         <img src="../assets/search.png" alt="Search" class="w-full">
       </button>
       <button class="w-7">
-        <img src="../assets/shopping-bag.png" alt="Shopping cart" class="w-full">
+        <img src="../assets/shopping-bag.png" alt="Shopping cart" class="w-full" @click="cartStore.openCart">
       </button>
     </div>
 
@@ -59,14 +68,17 @@
 
 
 <script>
+import { useCartStore } from '../stores/cartStore.js';
 import TakeTo from '../utils/TakeTo.js'
+import Cart from './cart.vue';
 
 export default {
 data(){
   return {
     categoryy: {},
     timeout: null,
-    TakeTo
+    cart: false,
+    cartStore: useCartStore()
   }
 },
 methods: {
@@ -81,6 +93,9 @@ methods: {
     }, 250)
   }
 
+  },
+  components: {
+    Cart
   },
   props: ["categories"],
   mounted(){

@@ -4,21 +4,29 @@ export class Products_repository {
     this.cache_orm = cache_orm;
   }
 
-  async create(images) {
+  async create(urls, productId) {
     try {
-      console.log('images', images)
-      const data = await this.db_orm.create(images);
+      console.log('images', urls)
+            const imgs = urls.map(i => {
+              return {
+              url: i.url,
+              productId
+    }} )
+      
+      console.log('imgs', imgs)
+      const data = await this.db_orm.create(imgs);
 
-      const imgs = {
-        urls: images.map(i => i.url),
-        productId: images.productId
-      }
       const cache = await this.cache_orm.create(imgs);
 
       return data;
     } catch (error) {
       throw error;
     }
+  }
+
+  async findByProductId(productId){
+    const data = await this.db_orm.findByProductId(productId);
+    return data
   }
 
   async findManyByProductIds(ids){

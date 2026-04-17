@@ -1,26 +1,38 @@
+import { defineStore } from "pinia"
 import { CategoryService } from "../services/CategoryService.js"
-class CategoryStore extends CategoryService{
-    constructor(){
-        super()
-        this.state = {
-            loading: false,
-            error: null,
-            products: []
-        }
-    }
-    async getById(id){
-        try {
-            this.state.loading = true;
-              const category = await super.getById(id);
-              console.log("categoryy", category)
-            this.state.loading = false;
-            this.state.products = category.data.result
-            return this.state;
-        } catch (error) {
-            this.state.loading = false
-            return this.state;
-        }
-    }
-}
 
-export default new CategoryStore()
+// instância do service (mantém separado da store)
+const service = new CategoryService()
+
+export default defineStore("category", {
+    
+    // estado reativo
+    state: () => ({
+        loading: false,
+        error: null,
+        products: []
+    }),
+
+    // ações (equivalente aos métodos da sua classe)
+    actions: {
+        async getById(id) {
+            try {
+                this.loading = true
+                this.error = null
+
+                const category = await service.getById(id)
+
+                console.log("category", category)
+
+                // ajusta conforme sua API
+                this.products = category.data.result
+
+            } catch (error) {
+                console.error("Erro ao buscar categoria:", error)
+                this.error = error
+            } finally {
+                this.loading = false
+            }
+        }
+    }
+})
