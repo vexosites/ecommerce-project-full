@@ -3,8 +3,7 @@ version: "3.9"
 services:
   api:
     build: ./back-end
-    working_dir: /app
-    command: sh -c "npx prisma generate && npx prisma db push && npm run dev"
+    command: sh -c "npx wait-port db:5432 && npm run prisma:generate && npm run prisma:db:push && npm run dev"
     ports:
       - "3000:3000"
       - "9229:9229"
@@ -42,7 +41,8 @@ services:
     environment:
       POSTGRES_DB: ecomerce_project
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: reacender
+      POSTGRES_PASSWORD: reacender,
+      JWT_SECRET: 'TESTEEEE'
     ports:
       - "5432:5432"
     volumes:

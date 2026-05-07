@@ -67,6 +67,10 @@ class ProductsRedisRepository {
     console.log('category', category)
     return category;
 }
+async findById(id){
+  const result = await this.redisProvide.hGet(`products:${id}`);
+  return result
+}
 }
 
 import redisClient from "../redisClient.js";

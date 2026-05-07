@@ -5,7 +5,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -55,7 +54,7 @@ model User {
   addresses Address[]
   orders    Order[]
   cart      Cart?
-  refreshToken RefreshToken?
+  refreshToken RefreshToken[]
 }
 
 // -----------------------
@@ -206,7 +205,7 @@ model OrderAddress {
 model RefreshToken {
   id        Int      @id @default(autoincrement())
   token     String
-  userId    Int      @unique
+  userId    Int      
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

@@ -7,9 +7,10 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma generate
+RUN ls -R /app/prisma
+
+RUN npm run prisma:generate
 
 EXPOSE 3000
 
-# CMD padrão: esperar o banco e rodar db push + start
-CMD ["sh", "-c", "npx prisma db push && npm run dev"]
+CMD ["sh", "-c", "npm run prisma:db:push && npm run dev"]

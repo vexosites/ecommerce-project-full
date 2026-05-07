@@ -3,7 +3,8 @@ class JoseProvider {
     this.jwtVerify = jwtVerify;
     this.jwtSign = jwtSign;
     this.errors = errors;
-    this.secret = new TextEncoder().encode(process.env.JWT_SECRET);
+    console.log("secret", process.env.JWT_SECRET)
+    this.secret = new TextEncoder().encode('teste');
   }
   async verify(token) {
     try {
