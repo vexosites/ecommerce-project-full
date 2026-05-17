@@ -1,76 +1,140 @@
 class ProductsRedisRepository {
   constructor(redisProvide, categoryRedis) {
-    (this.redisProvide = redisProvide), (this.categoryRedis = categoryRedis);
-    this.product_convert = function (product) {
-      return {
-        id: String(product.id),
-        name: product.name,
-        price: String(product.price),
-        stock: String(product.stock),
-        slug: product.slug,
-        description: product.description,
-        categoryId: String(product.categoryId),
-        active: String(true),
-      };
+    this.redisProvide = redisProvide;
+    this.categoryRedis = categoryRedis;
+  }
+
+  product_convert(product) {
+    return {
+      id: String(product.id),
+      name: String(product.name),
+      price: String(product.price),
+      stock: String(product.stock),
+      slug: String(product.slug),
+      description: String(product.description),
+      categoryId: String(product.categoryId),
+      active: String(product.active ?? true),
     };
   }
+
   async create(product) {
-    let productRedis = await this.redisProvide.hGetAll(`product:${String(product.id)}`);
+    const productKey = `product:${String(product.id)}`;
+    const productNameKey = `product-name:${product.name}`;
+
+    let productRedis = await this.redisProvide.hGetAll(productKey);
+
     if (Object.keys(productRedis).length === 0) {
-      productRedis = await this.redisProvide.hSet(
+      await this.redisProvide.hSet(
+        productKey,
+        this.product_convert(product)
+      );
+
+      productRedis = await this.redisProvide.hGetAll(productKey);
+    }
+
+    /*
+      Aqui assumimos que o repository de categoria
+      possui um método para adicionar o productId
+      na categoria.
+    */
+    await this.categoryRedis.addProduct(
+      String(product.categoryId),
+      String(product.id)
+    );
+
+    let productName = await this.redisProvide.hGetAll(productNameKey);
+
+    if (Object.keys(productName).length === 0) {
+      await this.redisProvide.hSet(productNameKey, {
+        productId: String(product.id),
+      });
+
+      productName = await this.redisProvide.hGetAll(productNameKey);
+    }
+
+    return {
+      productRedis,
+      productName,
+    };
+  }
+
+  async set(products) {
+    const pipeline = this.redisProvide.multi();
+
+    for (const product of products) {
+      pipeline.hSet(
         `product:${String(product.id)}`,
         this.product_convert(product)
       );
     }
-    const category = await this.categoryRedis.create(
-      String(product.categoryId)
-    );
-    let productName = await this.redisProvide.hGetAll(
-      `product-name:${product.name}`
-    );
-    if (Object.keys(productName).length === 0) {
-      productName = await this.redisProvide.hSet(
-        `product-name:${product.name}`,
-        { productId: String(product.id) }
-      );
-      return { productRedis, productName };
-    }
-    productName = await this.redisProvide.hSet(`product-name:${product.name}`, { id: String(product.id)});
-    return { productRedis, productName };
-  }
-  async findByCategoryId(categoryId) {
-    const category = await this.categoryRedis.findByCategoryId(
-      String(categoryId)
-    );
-    if(!category){
-        return null
-    }
-    const keys = category.map(id => `product:${String(id)}`);
-    const products = await this.redisProvide.mGetAll(keys);
-    return products;
-  }
-  async set(products) {
-    const pipeline = this.redisProvide.multi();
-  
-    for (const product of products) {
-      pipeline.hSet(`product:${String(product.id)}`, this.product_convert(product));
-    }
-  
+
     const result = await pipeline.exec();
+
     return result;
-  }  
-  async findByCategoryId(categoryId){
-    const category = await this.redisProvide.hGetAll(`category:${categoryId}`);
-    if(Object.keys(category).length === 0){
-        return null
+  }
+
+  async findById(id) {
+    const result = await this.redisProvide.hGetAll(
+      `product:${String(id)}`
+    );
+
+    if (Object.keys(result).length === 0) {
+      return null;
     }
-    console.log('category', category)
-    return category;
+
+    return result;
+  }
+
+  async findManyProductsByCategoryId(categoryId) {
+  const category = await this.categoryRedis.findCategoryByCategoryId(
+    String(categoryId)
+  );
+
+  if (!category || !Array.isArray(category)) {
+    return null;
+  }
+
+  const pipeline = this.redisProvide.multi();
+
+  for (const id of category) {
+    pipeline.hGetAll(`product:${String(id)}`);
+  }
+
+  const results = await pipeline.exec();
+
+  if (!results) {
+    return [];
+  }
+
+  const products = results
+    .map((result) => {
+      if (Array.isArray(result)) {
+        return result[1];
+      }
+
+      return result;
+    })
+    .filter(
+      (product) =>
+        product &&
+        typeof product === "object" &&
+        Object.keys(product).length > 0
+    );
+
+  return products;
 }
-async findById(id){
-  const result = await this.redisProvide.hGet(`products:${id}`);
-  return result
-}
+
+  async findByName(name) {
+    const result = await this.redisProvide.hGetAll(
+      `product-name:${name}`
+    );
+
+    if (Object.keys(result).length === 0) {
+      return null;
+    }
+
+    return result;
+  }
 }
 
 import redisClient from "../redisClient.js";

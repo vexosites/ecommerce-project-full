@@ -7,10 +7,12 @@ const module = MakeProductsModule();
 
 const Router = express.Router();
 
-Router.post("/", JwtAuth.adminAuth.bind(JwtAuth), module.post.bind(module));
+Router.post("/", module.post.bind(module));
 
 Router.get("/:name", module.getByName.bind(module));
 
-Router.get("/byId/:id", module.getById.bind(module))
+Router.get("/byId/:id", module.getById.bind(module));
+
+Router.get("/categories/:categoryId", module.getManyProductsByCategoryId.bind(module));
 
 export default Router;

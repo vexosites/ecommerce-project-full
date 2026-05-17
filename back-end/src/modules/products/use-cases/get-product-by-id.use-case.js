@@ -1,4 +1,4 @@
-class FindProductByIdUseCase{
+class GetProductByIdUseCase{
     constructor(){
 
     }

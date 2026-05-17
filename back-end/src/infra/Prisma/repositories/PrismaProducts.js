@@ -15,7 +15,7 @@ return await this.PrismaClient.product.create({
     }
 })
 }
-async findByCategoryId(categoryId){
+async findManyProductsByCategoryId(categoryId){
     const result = await this.PrismaClient.product.findMany({
         where: {
             categoryId: categoryId

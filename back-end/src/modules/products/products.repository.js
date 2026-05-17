@@ -5,16 +5,16 @@ export default class ProductsRepository{
     }
 
     async create(product){
-        const db = await this.Provider.create(product);
+        const result = await this.Provider.create(product);
         return result;
     }
 
-    async findByCategoryId(categoryId){
-        const cache = await this.CacheProvider.findByCategoryId(categoryId);
-        if(cache){
+    async findManyProductsByCategoryId(categoryId){
+        const cache = await this.CacheProvider.findManyProductsByCategoryId(categoryId);
+        if(cache && cache.length > 0){
             return cache;
         }
-        return await this.Provider.findByCategoryId(categoryId)
+        return await this.Provider.findManyProductsByCategoryId(categoryId)
     }
 
     async findById(id){

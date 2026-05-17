@@ -13,7 +13,8 @@ export class GetUserUseCase{
         const payload = {
             userId: result.id,
             name: result.name,
-            email: result.email
+            email: result.email,
+            role: result.role
         }
         const tokens = await this.AuthService.generateTokens(payload);
         return {

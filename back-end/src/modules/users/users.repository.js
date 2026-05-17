@@ -1,16 +1,11 @@
 export class UsersRepository {
   constructor(Provider, CacheProvider) {
     this.Provider = Provider;
-    this.CacheProvider = CacheProvider;
   }
 
   async create(user) {
-    try {
-      const data = await this.Provider.create(user);
-      return data;
-    } catch (error) {
-      throw error;
-    }
+      const result = await this.Provider.create(user);
+      return result;
   }
 
   async findByEmail(email) {

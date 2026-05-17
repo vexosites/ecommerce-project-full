@@ -1,12 +1,15 @@
+import AppError from "../../shared/errors/UserError.js";
+
 export class CategoriesController {
-  constructor(validator, service) {
+  constructor(validator, useCases) {
     this.validator = validator;
-    this.service = service;
+    this.useCases = useCases;
   }
-  async post(req, res) {
+  async post(req, res, next) {
       try {
       const VALIDATOR = this.validator.post(req);
-      const RESULT = await this.service.post(VALIDATOR);
+      const RESULT = await this.useCases.createCategory.execute(VALIDATOR);
+      console.log('result', RESULT)
 
       return res.status(201).json({result: RESULT});
     } catch (error) {
@@ -14,18 +17,17 @@ export class CategoriesController {
         switch (error.code) {
           case 'INVALID_DATA/':
            return res.status(400).json({message: error.message});
-          case 'UNIQUE_CONSTRAIN_FAILED':
+          case 'UNIQUE_CONSTRAIN_FAILED/':
            return res.status(409).json({message: error.message});
-          default:
-            return error
         }
       }
+      return next(error)
     }
   }
   async get(req, res) {
       try {
       const VALIDATOR = this.validator.getByCategoryId(req);
-      const RESULT = await this.service.getByName(VALIDATOR);
+      const RESULT = await this.useCases.getById.execute(VALIDATOR);
 
       return res.status(200).json({result: RESULT});
     } catch (error) {
@@ -38,22 +40,16 @@ export class CategoriesController {
           default:
             return error
         }
+        throw error;
       }
     }
   }
-  async getAll(req, res){
+  async getAll(req, res, next){
       try {
-      const RESULT = await this.service.getAll();
+      const RESULT = await this.useCases.getAll.execute();
       return res.status(200).json({result: RESULT});
     } catch (error) {
-         if(error instanceof AppError) {
-        switch (error.code) {
-          case '' :
-            return
-          default:
-            return error
-        }
-      }
+      return next(error)
     }
   }
 }

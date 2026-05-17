@@ -19,6 +19,11 @@ export class ProductsValidator {
   getById(req){
     return {id: parseInt(req.params.id)}
   }
+  getManyProductsByCategoryId(req){
+    const { categoryId } = req.params;
+    if(!categoryId) throw new AppError('invalid data', "INVALID_DATA/");
+    return {categoryId: parseInt(categoryId)};
+  }
 }
 
 export default new ProductsValidator();

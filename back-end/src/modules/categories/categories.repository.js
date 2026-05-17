@@ -5,10 +5,13 @@ export class CategoriesRepository {
   }
 
   async create(data) {
-
-    const result = await this.Provider.create({name: data.name, slug: data.slug, parentId: data.parentId});
-
-    return data;
+    const result = await this.Provider.create({
+      name: data.name, 
+      slug: data.slug, 
+      parentId: data.parentId
+    });
+    const cache = this.CacheProvider.create(result);
+    return result;
   }
 
   async findByCategoryId(categoryId) {
